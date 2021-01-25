@@ -20,6 +20,8 @@ public class BrowserClient extends WebViewClient {
         this.refreshLayout = refreshLayout;
     }
 
+
+
     @Override
     public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
         super.onReceivedError(view, request, error);

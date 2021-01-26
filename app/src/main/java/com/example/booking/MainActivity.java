@@ -1,5 +1,6 @@
 package com.example.booking;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -10,9 +11,18 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import java.net.HttpCookie;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.net.CookieStore;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -40,28 +50,36 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setUseWideViewPort(true);
+
+            webView.getSettings().setLoadWithOverviewMode(true);
+            webView.getSettings().setUseWideViewPort(true);
 
 
-        webView.setWebChromeClient(new MyChromeClient());
-        webView.setWebViewClient(new BrowserClient(refreshLayout));
+            webView.setWebChromeClient(new MyChromeClient());
+            webView.setWebViewClient(new BrowserClient(refreshLayout));
 
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setAllowFileAccess(true);
-        webSettings.setAppCacheEnabled(true);
+            WebSettings webSettings = webView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setAllowFileAccess(true);
+            webSettings.setAppCacheEnabled(true);
 
-        webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
-        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        webSettings.setAppCacheEnabled(true);
-        webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
-        webSettings.setSavePassword(true);
-        webSettings.setSaveFormData(true);
-        webSettings.setEnableSmoothTransition(true);
+            webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
+            webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+            webSettings.setAppCacheEnabled(true);
+            webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
+            webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+            webView.getSettings().setAllowFileAccess(true);
+            webView.getSettings().setDomStorageEnabled(true);
+            webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+            webSettings.setSavePassword(true);
+            webSettings.setSaveFormData(true);
+            webSettings.setEnableSmoothTransition(true);
 
-        loadWebPage();
+
+            loadWebPage();
+
+
+
 
     }
 
@@ -72,9 +90,18 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
 
         if(networkInfo != null && networkInfo.isConnectedOrConnecting()){
+            CookieManager.getInstance().getCookie("https://taxif.com/online.html");
+            CookieManager.getInstance().acceptThirdPartyCookies(webView);
             webView.loadUrl("https://taxif.com/online.html");
         }else{
             Toast.makeText(this,"You don't have any active internet connection",Toast.LENGTH_SHORT).show();
         }
     }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        webView.saveState(outState);
+    }
+
+
 }

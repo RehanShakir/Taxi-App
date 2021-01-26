@@ -26,7 +26,7 @@
 
         <activity
             android:name=".SplashScreen"
-            android:label="Booking App"><intent-filter>
+            android:label="TaxiF"><intent-filter>
             <action android:name="android.intent.action.MAIN" />
 
             <category android:name="android.intent.category.LAUNCHER" />

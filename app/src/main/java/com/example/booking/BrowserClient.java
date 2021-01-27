@@ -1,11 +1,16 @@
 package com.example.booking;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -25,13 +30,36 @@ public class BrowserClient extends WebViewClient {
 
     SwipeRefreshLayout refreshLayout;
     WebView webView;
+    ValueCallback<Uri[]> uploadMessage;
     Context context;
+    MainActivity myActivity;
 
     public BrowserClient() {
     }
 
-    public BrowserClient(SwipeRefreshLayout refreshLayout) {
+    public BrowserClient(SwipeRefreshLayout refreshLayout, ValueCallback<Uri[]> uploadMessage) {
         this.refreshLayout = refreshLayout;
+        this.uploadMessage = uploadMessage;
+    }
+    public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams) {
+        // make sure there is no existing message
+        if (myActivity.uploadMessage != null) {
+            myActivity.uploadMessage.onReceiveValue(null);
+            myActivity.uploadMessage = null;
+        }
+
+        myActivity.uploadMessage = filePathCallback;
+
+        Intent intent = fileChooserParams.createIntent();
+        try {
+            myActivity.startActivityForResult(intent, MainActivity.REQUEST_SELECT_FILE);
+        } catch (ActivityNotFoundException e) {
+            myActivity.uploadMessage = null;
+            Toast.makeText(myActivity, "Cannot open file chooser", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        return true;
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.booking;
 
+import android.content.Intent;
 import android.provider.Browser;
 import android.webkit.GeolocationPermissions;
 import android.webkit.WebChromeClient;
@@ -13,4 +14,5 @@ public class MyChromeClient extends WebChromeClient {
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
         callback.invoke(origin, true, false);
     }
+
 }
